@@ -1197,7 +1197,8 @@ def main():
 
             fig = create_graph_visualization(edges)
             if fig:
-                st.plotly_chart(fig, use_container_width=True)
+                # 添加唯一 key 修复 removeChild 错误
+                st.plotly_chart(fig, use_container_width=True, key=f"graph_viz_{len(edges)}_{int(time.time())}")
 
             st.markdown("---")
             st.markdown("#### 📊 Graph Statistics")
@@ -1292,7 +1293,8 @@ def main():
                             if path_edges:
                                 fig = create_graph_visualization(path_edges)
                                 if fig:
-                                    st.plotly_chart(fig, use_container_width=True)
+                                    # 添加唯一 key 修复 removeChild 错误
+                                    st.plotly_chart(fig, use_container_width=True, key=f"shortest_path_{entity1}_{entity2}_{int(time.time())}")
                         else:
                             st.warning(f"No path found between '{entity1}' and '{entity2}'")
 
@@ -1517,7 +1519,8 @@ def main():
                 type_df = pd.DataFrame(type_dist)
                 st.dataframe(type_df, use_container_width=True)
                 fig = px.pie(type_df, values='count', names='type', title='Question Types')
-                st.plotly_chart(fig, use_container_width=True)
+                # 添加唯一 key
+                st.plotly_chart(fig, use_container_width=True, key="type_dist_pie")
             else:
                 st.info("No type distribution data available")
 
@@ -1528,7 +1531,8 @@ def main():
                 entity_df = pd.DataFrame(top_entities)
                 st.dataframe(entity_df, use_container_width=True)
                 fig = px.bar(entity_df, x='name', y='degree', title='Top Entities by Connection Degree')
-                st.plotly_chart(fig, use_container_width=True)
+                # 添加唯一 key
+                st.plotly_chart(fig, use_container_width=True, key="top_entities_bar")
             else:
                 st.info("No entity data available")
 
@@ -1543,7 +1547,8 @@ def main():
                 doc_df = pd.DataFrame(top_docs)
                 st.dataframe(doc_df, use_container_width=True)
                 fig = px.bar(doc_df, x='title', y='count', title='Documents by Supporting Frequency')
-                st.plotly_chart(fig, use_container_width=True)
+                # 添加唯一 key
+                st.plotly_chart(fig, use_container_width=True, key="docs_support_bar")
             else:
                 st.info("No document data available")
 
@@ -1568,7 +1573,8 @@ def main():
             ])
             st.dataframe(stats_df, use_container_width=True)
             fig = px.bar(stats_df, x='Node Type', y='Count', title='Node Distribution in Neo4j')
-            st.plotly_chart(fig, use_container_width=True)
+            # 添加唯一 key
+            st.plotly_chart(fig, use_container_width=True, key="node_dist_bar")
 
     # ==================== Tab 6: Node Management ====================
     with tab6:
@@ -1777,7 +1783,8 @@ def main():
                 )
                 fig.update_traces(marker=dict(size=8, opacity=0.7))
                 fig.update_layout(height=500)
-                st.plotly_chart(fig, use_container_width=True)
+                # 添加唯一 key
+                st.plotly_chart(fig, use_container_width=True, key=f"pca_scatter_{n_clusters}_{max_samples}_{int(time.time())}")
 
             col1, col2 = st.columns(2)
             with col1:
@@ -1786,7 +1793,8 @@ def main():
                 size_df = pd.DataFrame(size_data)
                 fig = px.bar(size_df, x='Cluster', y='Size', title="Questions per Cluster",
                              color='Size', color_continuous_scale='Blues')
-                st.plotly_chart(fig, use_container_width=True)
+                # 添加唯一 key
+                st.plotly_chart(fig, use_container_width=True, key="cluster_size_bar")
 
             with col2:
                 st.subheader("🏷️ Question Type Distribution by Cluster")
@@ -1796,7 +1804,8 @@ def main():
                 type_df = pd.DataFrame(type_cluster_data)
                 type_pivot = pd.crosstab(type_df['cluster'], type_df['type'])
                 fig = px.bar(type_pivot, barmode='stack', title="Question Types by Cluster")
-                st.plotly_chart(fig, use_container_width=True)
+                # 添加唯一 key
+                st.plotly_chart(fig, use_container_width=True, key="type_distribution_bar")
 
             st.subheader("🔍 Inspect Individual Clusters")
             selected_cluster = st.selectbox("Select Cluster to Explore", [c['cluster_id'] for c in clusters])
