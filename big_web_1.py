@@ -625,16 +625,13 @@ class MongoDBManager:
 
     def connect(self):
         try:
-            # 完全禁用 TLS 验证的配置
-            import ssl
-
+            # 使用正确的 pymongo TLS 参数
             self.client = MongoClient(
                 self.uri,
                 tls=True,
                 tlsAllowInvalidCertificates=True,
                 tlsAllowInvalidHostnames=True,
-                tlsCertificateKeyFile=None,
-                ssl_cert_reqs=ssl.CERT_NONE
+                serverSelectionTimeoutMS=30000
             )
             self.db = self.client[self.db_name]
             self.client.admin.command('ping')
