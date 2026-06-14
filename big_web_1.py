@@ -625,20 +625,18 @@ class MongoDBManager:
 
     def connect(self):
         try:
-            # 针对 MongoDB Atlas 的 TLS 配置
-            if "mongodb+srv" in self.uri:
-                self.client = MongoClient(
-                    self.uri,
-                    tls=True,
-                    tlsAllowInvalidCertificates=True,
-                    tlsAllowInvalidHostnames=True,
-                    serverSelectionTimeoutMS=30000
-                )
-            else:
-                self.client = MongoClient(self.uri)
+            # 完全禁用 TLS 验证的配置
+            import ssl
 
+            self.client = MongoClient(
+                self.uri,
+                tls=True,
+                tlsAllowInvalidCertificates=True,
+                tlsAllowInvalidHostnames=True,
+                tlsCertificateKeyFile=None,
+                ssl_cert_reqs=ssl.CERT_NONE
+            )
             self.db = self.client[self.db_name]
-            # 测试连接
             self.client.admin.command('ping')
             return True, "Connected to MongoDB successfully"
         except Exception as e:
@@ -1017,7 +1015,7 @@ def main():
         # 云端 MongoDB Atlas 连接配置（密码中的 ! 已编码为 %21）
         mongodb_uri = st.text_input(
             "MongoDB URI",
-            value="mongodb+srv://sifanxiang0627_db_user:xsf200302010067%21@cluster0.s3uzp7i.mongodb.net/",
+            value="mongodb+srv://sifanxiang0627_db_user:1234567890@cluster0.s3uzp7i.mongodb.net/",
             key="mongodb_uri"
         )
         mongodb_db = st.text_input(
