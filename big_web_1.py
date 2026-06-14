@@ -625,8 +625,20 @@ class MongoDBManager:
 
     def connect(self):
         try:
-            self.client = MongoClient(self.uri)
+            # 针对 MongoDB Atlas 的 TLS 配置
+            if "mongodb+srv" in self.uri:
+                self.client = MongoClient(
+                    self.uri,
+                    tls=True,
+                    tlsAllowInvalidCertificates=True,
+                    tlsAllowInvalidHostnames=True,
+                    serverSelectionTimeoutMS=30000
+                )
+            else:
+                self.client = MongoClient(self.uri)
+
             self.db = self.client[self.db_name]
+            # 测试连接
             self.client.admin.command('ping')
             return True, "Connected to MongoDB successfully"
         except Exception as e:
